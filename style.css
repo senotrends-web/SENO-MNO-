@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root{
+  --gold:#e6b45a;
+  --gold-bright:#ffd27a;
+  --ember:#ff6a3d;
+  --teal:#3fb6a8;
+  --danger:#ff4d4d;
+  --panel:#0e1526ee;
+  --panel-line:#2a3a5c;
+  --text:#f3f0e6;
+  --text-dim:#a9b3cc;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+html,body{
+  margin:0; padding:0; width:100%; height:100%;
+  overflow:hidden; background:#05070f;
+  font-family:'Rubik',sans-serif; color:var(--text);
+  touch-action:none;
+}
+
+/* Interactive controls must always get a reliable native click/tap even
+   though the page root disables default touch gestures for swipe control.
+   Without this, buttons can silently stop responding on some mobile
+   browsers (this was the "Skip Intro does nothing" bug). */
+button, input[type="range"]{
+  touch-action:manipulation;
+}
+
+#game-root{
+  position:fixed; inset:0; width:100%; height:100%;
+  overflow:hidden;
+}
+
+#game-canvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+  background:#0a1020;
+}
+
+.hidden{display:none !important;}
+
+/* ============ INTRO ============ */
+#intro-layer{
+  position:absolute; inset:0; z-index:50;
+  background:#000;
+  display:flex; align-items:center; justify-content:center;
+}
+#intro-video{
+  width:100%; height:100%;
+  object-fit:cover;
+}
+#intro-video.hidden{display:none;}
+#intro-fallback{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:24px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(230,180,90,0.18), transparent 55%),
+    linear-gradient(180deg,#0a1020,#05070f 70%);
+}
+.fallback-title{
+  font-size:clamp(34px,9vw,64px);
+  font-weight:900; letter-spacing:1px;
+  text-shadow:0 0 24px rgba(255,210,122,0.45);
+}
+.fallback-title span{color:var(--gold-bright);}
+.fallback-sub{
+  margin-top:10px; color:var(--text-dim); font-size:clamp(13px,3vw,16px);
+  max-width:340px;
+}
+#skip-intro-btn{
+  position:absolute; bottom:28px; right:20px; z-index:5;
+  background:rgba(10,14,26,0.75);
+  border:1px solid var(--panel-line);
+  color:var(--text);
+  padding:9px 16px;
+  border-radius:999px;
+  font-family:'Rubik',sans-serif;
+  font-weight:700; font-size:12.5px;
+  letter-spacing:0.5px;
+  cursor:pointer;
+}
+#skip-intro-btn:active{transform:scale(0.96);}
+
+/* ============ READY LAYER ============ */
+#ready-layer{
+  position:absolute; inset:0; z-index:40;
+  display:flex; align-items:flex-end; justify-content:center;
+  padding-bottom:14%;
+  background:linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.35));
+  pointer-events:none;
+}
+.ready-hint{ text-align:center; animation:readyPulse 1.4s ease-in-out infinite; }
+.ready-title{
+  font-size:clamp(18px,5vw,26px);
+  font-weight:900; letter-spacing:1px;
+  color:var(--gold-bright);
+  text-shadow:0 0 18px rgba(255,210,122,0.5);
+}
+.ready-sub{ color:var(--text-dim); font-size:clamp(11px,3vw,14px); margin-top:4px; }
+@keyframes readyPulse{0%,100%{opacity:1; transform:translateY(0);}50%{opacity:.6; transform:translateY(-4px);}}
+
+/* ============ GENERIC SCREENS ============ */
+.screen{
+  position:absolute; inset:0; z-index:60;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(230,180,90,0.12), transparent 55%),
+    linear-gradient(180deg, rgba(5,7,15,0.96), rgba(5,7,15,0.99));
+  padding:24px;
+  text-align:center;
+  animation:fadeIn .35s ease both;
+}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+
+.title-wrap{margin-bottom:6px;}
+.game-title{
+  font-size:clamp(38px,11vw,72px);
+  font-weight:900; letter-spacing:1px;
+  text-shadow:0 0 28px rgba(255,210,122,0.4);
+}
+.game-title span{color:var(--gold-bright);}
+.game-subtitle{color:var(--text-dim); margin-top:6px; font-size:clamp(12px,3.2vw,16px); letter-spacing:0.5px;}
+
+.start-characters{ display:flex; gap:18px; margin:8px 0 4px; }
+.char-portrait{
+  width:74px; height:74px; border-radius:50%;
+  border:2px solid var(--gold);
+  background-size:cover; background-position:center top;
+  box-shadow:0 0 18px rgba(230,180,90,0.35);
+  animation:floatY 2.6s ease-in-out infinite;
+}
+.char-portrait.mno{animation-delay:.4s;}
+@keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+.primary-btn, .secondary-btn{
+  font-family:'Rubik',sans-serif;
+  font-weight:800; letter-spacing:1px;
+  border:none; border-radius:14px;
+  cursor:pointer;
+  min-width:200px;
+  padding:15px 28px;
+  font-size:16px;
+}
+.primary-btn{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+  color:#241505;
+  box-shadow:0 8px 22px rgba(230,180,90,0.3);
+}
+.primary-btn:active{transform:translateY(2px); box-shadow:0 4px 12px rgba(230,180,90,0.25);}
+.secondary-btn{
+  background:transparent;
+  border:1.5px solid var(--panel-line);
+  color:var(--text);
+}
+.secondary-btn:active{transform:translateY(2px); border-color:var(--gold);}
+
+.best-score-line{
+  margin-top:6px; font-family:'JetBrains Mono',monospace;
+  color:var(--text-dim); font-size:13px; letter-spacing:1px;
+}
+.best-score-line span{color:var(--gold-bright); font-weight:700;}
+
+/* ============ HUD ============ */
+#hud{ position:absolute; inset:0; z-index:30; pointer-events:none; }
+.hud-top{
+  position:absolute; top:max(12px, env(safe-area-inset-top)); left:0; right:0;
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:0 14px;
+}
+.hud-box{
+  background:var(--panel);
+  border:1px solid var(--panel-line);
+  border-radius:10px;
+  padding:6px 12px;
+  display:flex; flex-direction:column; align-items:center;
+  min-width:78px;
+  backdrop-filter:blur(4px);
+}
+.hud-label{ font-size:9.5px; color:var(--text-dim); letter-spacing:1px; font-weight:700; }
+.hud-box span:not(.hud-label){
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700; font-size:16px; color:var(--gold-bright);
+}
+.hud-distance{ transform:translateY(2px); }
+
+#pause-btn{
+  position:absolute; top:max(70px, calc(env(safe-area-inset-top) + 58px)); left:14px;
+  width:38px; height:38px; border-radius:50%;
+  background:var(--panel); border:1px solid var(--panel-line);
+  color:var(--text); font-size:13px;
+  pointer-events:all; cursor:pointer;
+}
+
+#powerup-indicator{
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  width:min(240px, 60vw); height:8px;
+  background:rgba(255,255,255,0.12);
+  border-radius:999px; overflow:hidden;
+  border:1px solid var(--panel-line);
+}
+#powerup-bar-fill{
+  height:100%; width:100%;
+  background:linear-gradient(90deg, var(--teal), var(--gold-bright));
+  transform-origin:left center;
+}
+
+/* ============ PAUSE MENU ============ */
+.panel-title{
+  font-size:clamp(24px,7vw,34px); font-weight:900; letter-spacing:1px;
+  color:var(--gold-bright);
+}
+.over-title{ color:var(--danger); text-shadow:0 0 20px rgba(255,77,77,0.4); }
+
+.volume-rows{
+  margin-top:10px; display:flex; flex-direction:column; gap:8px;
+  width:min(260px, 80vw);
+}
+.volume-rows label{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; font-size:12px; color:var(--text-dim); font-weight:700;
+}
+.volume-rows input{ flex:1; accent-color:var(--gold-bright); }
+
+/* ============ GAME OVER ============ */
+.stats-block{
+  width:min(280px,84vw);
+  background:var(--panel);
+  border:1px solid var(--panel-line);
+  border-radius:14px;
+  padding:14px 18px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.stat-row{
+  display:flex; justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px; color:var(--text-dim); font-weight:600;
+}
+.stat-row span:last-child{ color:var(--text); font-weight:700; }
+.stat-row.best{ border-top:1px dashed var(--panel-line); padding-top:8px; margin-top:2px; }
+.stat-row.best span:last-child{ color:var(--gold-bright); }
+
+/* ============ CINEMATIC CAPTION ============ */
+#cinematic-caption{
+  position:absolute; left:0; right:0; bottom:14%;
+  z-index:45; text-align:center; pointer-events:none;
+  font-size:clamp(14px,4vw,20px); font-weight:700;
+  color:var(--gold-bright);
+  text-shadow:0 2px 10px rgba(0,0,0,0.8);
+  padding:0 24px;
+  transition:opacity .4s ease;
+}
+
+/* Landscape optimization */
+@media (orientation:landscape) and (max-height:420px){
+  .hud-box{ padding:4px 10px; min-width:64px; }
+  .primary-btn, .secondary-btn{ padding:11px 22px; font-size:14px; min-width:170px; }
+}
